@@ -5,24 +5,13 @@ const massive = require('massive');
 const session = require('express-session');
 const authCtrl = require('./controllers/authController');
 
-// authCtrl = require('./authController'),
+const PORT = 4000;
 
 const { CONNECTION_STRING, SESSION_SECRET } = process.env;
 
 const app = express();
 
 app.use(express.json());
-
-//Set up session as TLM
-
-app.use(session({
-    resave: true,
-    saveUninitialized: false,
-    secret: SESSION_SECRET,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 * 365 }
-}));
-
-//Create db connection
 
 massive({
     connectionString: CONNECTION_STRING,
@@ -32,9 +21,17 @@ massive({
     console.log('db connected');
 })
 
-// app.post('/auth/register', authCtrl.register);
+app.use(session({
+    resave: true,
+    saveUninitialized: false,
+    secret: SESSION_SECRET,
+}));
 
-const PORT = 4000;
+//Create db connection
+
+
+
+app.post('/auth/register', authCtrl.register);
 
 app.listen(PORT, () => console.log(`Server is listening on ${PORT}.`))
 
